@@ -4,40 +4,32 @@ import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { pinecone } from '@/utils/pinecone-client';
 import { CustomPDFLoader } from '@/utils/customPDFLoader';
 import { PINECONE_INDEX_NAME, PINECONE_NAME_SPACE } from '@/config/pinecone';
-import { DirectoryLoader } from 'langchain/document_loaders/fs/directory';
 
-export async function upload_embedding(file: string) {
-  // try {
-  //   /*load raw docs from the all files in the directory */
-  //   const directoryLoader = new DirectoryLoader(filePath, {
-  //     '.pdf': (path) => new CustomPDFLoader(path),
-  //   });
+export async function upload_embedding(filename: string, file: Blob) {
+  let loader = new CustomPDFLoader(file);
 
-  //   // const loader = new PDFLoader(filePath);
-  //   const rawDocs = await directoryLoader.load();
+  let document = await loader.load();
 
-  //   /* Split text into chunks */
-  //   const textSplitter = new RecursiveCharacterTextSplitter({
-  //     chunkSize: 1000,
-  //     chunkOverlap: 200,
-  //   });
+  /* Split text into chunks */
+  const textSplitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 1000,
+    chunkOverlap: 200,
+  });
 
-  //   const docs = await textSplitter.splitDocuments(rawDocs);
-  //   console.log('split docs', docs);
+  const docs = await textSplitter.splitDocuments(document);
+  console.log('split docs', docs);
 
-  //   console.log('creating vector store...');
-  //   /*create and store the embeddings in the vectorStore*/
-  //   const embeddings = new OpenAIEmbeddings();
-  //   const index = pinecone.Index(PINECONE_INDEX_NAME); //change to your own index name
+  docs.map(doc => doc.metadata.source = filename)
 
-  //   //embed the PDF documents
-  //   await PineconeStore.fromDocuments(docs, embeddings, {
-  //     pineconeIndex: index,
-  //     namespace: PINECONE_NAME_SPACE,
-  //     textKey: 'text',
-  //   });
-  // } catch (error) {
-  //   console.log('error', error);
-  //   throw new Error('Failed to ingest your data');
-  // }
+  console.log('creating vector store...');
+  /*create and store the embeddings in the vectorStore*/
+  const embeddings = new OpenAIEmbeddings();
+  const index = pinecone.Index(PINECONE_INDEX_NAME); //change to your own index name
+
+  //embed the PDF documents
+  await PineconeStore.fromDocuments(docs, embeddings, {
+    pineconeIndex: index,
+    namespace: PINECONE_NAME_SPACE,
+    textKey: 'text',
+  });
 };

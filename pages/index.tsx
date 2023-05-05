@@ -120,9 +120,42 @@ export default function Home() {
     }
   };
 
+  async function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+
+    if (!file) return
+
+    const pdfBlob = await fileToBlob(file)
+
+    const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": pdfBlob.type,
+      },
+      body: pdfBlob,
+    })
+
+    if(!response.ok) {
+      console.log("Error uploading file")
+      return
+    }
+
+    const data = await response.json()
+  };
+
+  function fileToBlob (file: File): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(new Blob([reader.result as ArrayBuffer], { type: file.type }));
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
   return (
     <>
       <Layout>
+        <input type="file" onChange={handleFileInput} accept=".pdf"/>
         <div className="mx-auto flex flex-col gap-4">
           <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
             Chat With Your Legal Docs
