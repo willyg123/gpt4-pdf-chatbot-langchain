@@ -25,7 +25,7 @@ export default function Home() {
   }>({
     messages: [
       {
-        message: 'Hi, what would you like to learn about this legal case?',
+        message: 'Hi, my name is Aimee, I am your personal AI study buddy, what would you like to learn from your textbook?',
         type: 'apiMessage',
       },
     ],
@@ -157,8 +157,22 @@ export default function Home() {
       <Layout>
         <input type="file" onChange={handleFileInput} accept=".pdf"/>
         <div className="mx-auto flex flex-col gap-4">
+        <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '1rem',
+          }}>
+            <h2 style={{
+              fontSize: '2rem',
+              fontWeight: 'bold',
+              color: '#000',
+            }}>Aimee</h2>
+            <p> Your Ai Study Budy</p>
+          </div>
           <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-            Chat With Your Legal Docs
+            Chat With Your University Text Books
           </h1>
           <main className={styles.main}>
             <div className={styles.cloud}>
@@ -257,7 +271,7 @@ export default function Home() {
                     placeholder={
                       loading
                         ? 'Waiting for response...'
-                        : 'What is this legal case about?'
+                        : 'Explain this concept simply...'
                     }
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -294,8 +308,8 @@ export default function Home() {
           </main>
         </div>
         <footer className="m-auto p-4">
-          <a href="https://twitter.com/mayowaoshin">
-            Powered by LangChainAI. Demo built by Mayo (Twitter: @mayowaoshin).
+          <a>
+          University of Adelaide - Tech eChallenge Demo built by Will Gerard.
           </a>
         </footer>
       </Layout>
